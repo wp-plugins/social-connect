@@ -9,7 +9,9 @@ Give your visitors a way to comment, login and register with their Twitter, Face
 
 == Description ==
 
-Social Connect adds buttons for Twitter, Facebook, Google, Yahoo, WordPress.com or other OpenID on the login, register and comment forms of a WordPress site.
+Social Connect adds social login buttons on the login, register and comment forms of your WordPress site.
+
+The buttons offer login and registration using a Twitter, Facebook, Google, Yahoo, WordPress.com or OpenID account.
 
 It makes it super easy for new members to register with your site and existing members to login.
 
