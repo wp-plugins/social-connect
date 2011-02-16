@@ -58,7 +58,7 @@ function sc_render_social_connect_settings()
 	<p>Need to register? <a href="http://dev.twitter.com/apps/new">Register an Application</a> and fill the form with the details below:
 	<ol>
 		<li>Application Type: <strong>Browser</strong></li>
-		<li>Callback URL: <strong><?php echo plugins_url() . '/wp_social_connect/twitter/callback.php'; ?></strong></li>
+		<li>Callback URL: <strong><?php echo SOCIAL_CONNECT_PLUGIN_URL . '/twitter/callback.php'; ?></strong></li>
 		<li>Default Access: <strong>Read &amp; Write</strong></li>
 	</ol>
     <table class="form-table">
@@ -86,7 +86,7 @@ function sc_render_social_connect_settings()
 	<p>Need to register? <a href="https://manage.dev.live.com/AddApplication.aspx">Register an Application</a> and the fill the form with the details below. 
 	<ol>
 		<li>Application Type: <strong>Web application</strong></li>
-		<li>Callback URL: <strong><?php echo plugins_url() . '/wp_social_connect/liveid/callback.php'; ?></strong></li>
+		<li>Callback URL: <strong><?php echo SOCIAL_CONNECT_PLUGIN_URL . '/liveid/callback.php'; ?></strong></li>
 		<li>Security Algorithm: <strong>wsignin1.0</strong></li>
 		<li>From the application you created, copy and paste the following details. Note that all fields are required. </li>
 	</ol>

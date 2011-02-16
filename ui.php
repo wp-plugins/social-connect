@@ -2,7 +2,7 @@
 
 function sc_render_login_form_social_connect()
 {
-  $images_url = plugins_url() . '/wp_social_connect/media/img/';
+  $images_url = SOCIAL_CONNECT_PLUGIN_URL . '/media/img/';
   
   $twitter_enabled = get_option('social_connect_twitter_enabled') && get_option('social_connect_twitter_consumer_key') && get_option('social_connect_twitter_consumer_secret');
   $facebook_enabled = get_option('social_connect_facebook_api_key') && get_option('social_connect_facebook_secret_key');
@@ -67,25 +67,25 @@ function sc_render_login_form_social_connect()
 ?>
 
 <div class="social_connect_facebook_auth" client_id="<?php echo get_option('social_connect_facebook_api_key'); ?>" redirect_uri="<?php 
-  echo urlencode(plugins_url() . '/wp_social_connect/facebook/callback.php'); ?>">
+  echo urlencode(SOCIAL_CONNECT_PLUGIN_URL . '/facebook/callback.php'); ?>">
 </div>
 
-<div class="social_connect_twitter_auth" redirect_uri="<?php echo(plugins_url() . '/wp_social_connect/twitter/connect.php'); ?>">
+<div class="social_connect_twitter_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/twitter/connect.php'); ?>">
 </div>
 
-<div class="social_connect_liveid_auth" appid="<?php echo get_option('social_connect_liveid_appid_key'); ?>" sec_algo="<?php echo get_option('social_connect_liveid_security_algorithm'); ?>" redirect_uri="<?php echo(plugins_url() . '/wp_social_connect/liveid/connect.php'); ?>">
+<div class="social_connect_liveid_auth" appid="<?php echo get_option('social_connect_liveid_appid_key'); ?>" sec_algo="<?php echo get_option('social_connect_liveid_security_algorithm'); ?>" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/liveid/connect.php'); ?>">
 </div>
 
-<div class="social_connect_google_auth" redirect_uri="<?php echo(plugins_url() . '/wp_social_connect/google/connect.php'); ?>">
+<div class="social_connect_google_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/google/connect.php'); ?>">
 </div>
 
-<div class="social_connect_yahoo_auth" redirect_uri="<?php echo(plugins_url() . '/wp_social_connect/yahoo/connect.php'); ?>">
+<div class="social_connect_yahoo_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/yahoo/connect.php'); ?>">
 </div>
 
-<div class="social_connect_openid_auth" redirect_uri="<?php echo(plugins_url() . '/wp_social_connect/openid/connect.php'); ?>">
+<div class="social_connect_openid_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/openid/connect.php'); ?>">
 </div>
 
-<div class="social_connect_wordpress_auth" redirect_uri="<?php echo(plugins_url() . '/wp_social_connect/wordpress/connect.php'); ?>">
+<div class="social_connect_wordpress_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/wordpress/connect.php'); ?>">
 </div>
 
 <div class="social_connect_openid_form" title="OpenID">
@@ -140,7 +140,7 @@ add_action('comment_post', 'sc_social_connect_add_comment_meta');
 
 function sc_social_connect_render_comment_meta($link) {
   global $comment;
-  $images_url = plugins_url() . '/wp_social_connect/media/img/';
+  $images_url = SOCIAL_CONNECT_PLUGIN_URL . '/media/img/';
   $social_connect_comment_via_provider = get_comment_meta($comment->comment_ID, 'social_connect_comment_via_provider', true);
   if($social_connect_comment_via_provider) {
     return $link . "&nbsp;" . "<img id='social_connect_comment_via_provider' src='" . $images_url . $social_connect_comment_via_provider . "_16.png" . "' />";

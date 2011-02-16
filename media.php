@@ -3,7 +3,7 @@
 function sc_add_stylesheets()
 {
   if(!wp_style_is('social_connect', 'registered') ) {
-    wp_register_style("social_connect", plugins_url() . "/wp_social_connect/media/css/style.css");
+    wp_register_style("social_connect", SOCIAL_CONNECT_PLUGIN_URL . "/media/css/style.css");
     wp_register_style("jquery-ui", 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/smoothness/jquery-ui.css');
   }
 
@@ -22,7 +22,7 @@ add_action('wp_head', 'sc_add_stylesheets');
 function sc_add_admin_stylesheets()
 {
   if(!wp_style_is('social_connect', 'registered') ) {
-    wp_register_style("social_connect", plugins_url() . "/wp_social_connect/media/css/style.css");
+    wp_register_style("social_connect", SOCIAL_CONNECT_PLUGIN_URL . "/media/css/style.css");
   }
 
   if (did_action('wp_print_styles')) {
@@ -37,7 +37,7 @@ add_action('admin_print_styles', 'sc_add_admin_stylesheets');
 function sc_add_javascripts()
 {
   if(!wp_script_is('social_connect', 'registered') ) {
-    wp_register_script("social_connect", plugins_url() . "/wp_social_connect/media/js/connect.js");
+    wp_register_script("social_connect", SOCIAL_CONNECT_PLUGIN_URL . "/media/js/connect.js");
   }
 
   // commented out check below as then the JS files are just not emitted, not sure why

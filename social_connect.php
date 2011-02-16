@@ -10,7 +10,9 @@ License: GPL2
 */
 ?>
 <?php
+
 require_once(ABSPATH . WPINC . '/registration.php');
+require_once(dirname(__FILE__) . '/constants.php' );
 require_once(dirname(__FILE__) . '/utils.php' );
 require_once(dirname(__FILE__) . '/media.php' );
 require_once(dirname(__FILE__) . '/admin.php' );

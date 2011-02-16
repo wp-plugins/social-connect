@@ -534,7 +534,7 @@ class WindowsLiveLogin
      *  in an area on your server that cannot be accessed through the 
      *  Internet. This file contains important confidential information.
      *   
-     *  Function modified for wp_social_connect to accept passed hash when
+     *  Function modified for social-connect to accept passed hash when
      *  xml file is not to be used.
      */
     public static function initFromXml($settingsFile, $settings = array())
