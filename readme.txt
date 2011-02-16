@@ -2,8 +2,8 @@
 Contributors: ashwinphatak, thenbrent
 Tags: facebook, wordpress.com, twitter, google, yahoo, social, login, register
 Requires at least: 3.0
-Tested up to: 3.0.2
-Stable tag: 0.1
+Tested up to: 3.0.5
+Stable tag: 0.2
 
 Give your visitors a way to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
 
