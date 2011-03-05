@@ -24,11 +24,12 @@ $LOGOUT = $INDEX;
 
 $liveid_appid = get_option('social_connect_liveid_appid_key');
 $liveid_secret = get_option('social_connect_liveid_secret_key');
-$liveid_secalgo = get_option('social_connect_liveid_security_algorithm');
-$liveid_return = get_option('social_connect_liveid_return_url');
+$liveid_secalgo = "wsignin1.0";
+$liveid_return = SOCIAL_CONNECT_PLUGIN_URL . '/liveid/callback.php';
 $liveid_policy = get_option('social_connect_liveid_policy_url');
 
 $liveid_settings = array("appid"=>$liveid_appid,"secret"=>$liveid_secret,"securityalgorithm"=>$liveid_secalgo,"returnurl"=>$liveid_return,"policyurl"=>$liveid_policy);
+
 
 // Initialize the WindowsLiveLogin module.
 $wll = WindowsLiveLogin::initFromXml(false,$liveid_settings);

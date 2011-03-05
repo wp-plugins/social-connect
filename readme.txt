@@ -1,17 +1,17 @@
 === Social Connect ===
-Contributors: ashwinphatak, thenbrent
-Tags: facebook, wordpress.com, twitter, google, yahoo, social, login, register
+Contributors: app2technologies, thenbrent
+Tags: facebook, wordpress.com, twitter, google, yahoo, openid, windows live, social, login, register
 Requires at least: 3.0
 Tested up to: 3.0.5
-Stable tag: 0.2
+Stable tag: 0.3
 
-Give your visitors a way to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
+Give your visitors a way to comment, login and register with their Twitter, Facebook, Google, Yahoo, Windows Live, OpenID or WordPress.com account.
 
 == Description ==
 
 Social Connect adds social login buttons on the login, register and comment forms of your WordPress site.
 
-The buttons offer login and registration using a Twitter, Facebook, Google, Yahoo, WordPress.com or OpenID account.
+The buttons offer login and registration using a Twitter, Facebook, Google, Yahoo, Windows Live, WordPress.com or OpenID account.
 
 It makes it super easy for new members to register with your site and existing members to login.
 
@@ -47,3 +47,12 @@ If you have a question not answered here, please ask in the [Support Forums](htt
 
 = 0.1 =
 * Initial beta release. 
+
+= 0.2 =
+* Fix for directory name - now works independent of directory name of the plugin. 
+
+= 0.3 =
+* Social Connect moved to it's own top level menu in wp-admin.
+* Enable/disable integration with each social provider.
+* Simplified setup for Windows Live.
+* Introduced diagnostics to check for required cryptographic extensions and server rewrite rules.

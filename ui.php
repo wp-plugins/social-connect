@@ -5,8 +5,13 @@ function sc_render_login_form_social_connect()
   $images_url = SOCIAL_CONNECT_PLUGIN_URL . '/media/img/';
   
   $twitter_enabled = get_option('social_connect_twitter_enabled') && get_option('social_connect_twitter_consumer_key') && get_option('social_connect_twitter_consumer_secret');
-  $facebook_enabled = get_option('social_connect_facebook_api_key') && get_option('social_connect_facebook_secret_key');
-  $liveid_enabled = get_option('social_connect_liveid_appid_key') && get_option('social_connect_liveid_secret_key') && get_option('social_connect_liveid_security_algorithm') && get_option('social_connect_liveid_return_url') && get_option('social_connect_liveid_policy_url');
+  $facebook_enabled = get_option('social_connect_facebook_enabled', 1) && get_option('social_connect_facebook_api_key') && get_option('social_connect_facebook_secret_key');  
+  $liveid_enabled = get_option('social_connect_liveid_enabled', 1) && get_option('social_connect_liveid_appid_key') && get_option('social_connect_liveid_secret_key') && get_option('social_connect_liveid_security_algorithm') && get_option('social_connect_liveid_return_url') && get_option('social_connect_liveid_policy_url');
+  $google_enabled = get_option('social_connect_google_enabled', 1);
+  $yahoo_enabled = get_option('social_connect_yahoo_enabled', 1);
+  $openid_enabled = get_option('social_connect_openid_enabled', 1);
+  $wordpress_enabled = get_option('social_connect_wordpress_enabled', 1);
+  
 ?>
 
 <div id="social_connect_ui">
@@ -22,10 +27,18 @@ function sc_render_login_form_social_connect()
   <?php if($liveid_enabled) { ?>
     <a href="javascript://" title="LiveID" class="social_connect_login_liveid"><img src="<?php echo $images_url . 'windows_32.png' ?>" /></a>
   <?php } ?>
+  <?php if($google_enabled) { ?>
   <a href="javascript://" title="Google" class="social_connect_login_google"><img src="<?php echo $images_url . 'google_32.png' ?>" /></a>
+  <?php } ?>
+  <?php if($yahoo_enabled) { ?>
   <a href="javascript://" title="Yahoo" class="social_connect_login_yahoo"><img src="<?php echo $images_url . 'yahoo_32.png' ?>" /></a>
+  <?php } ?>
+  <?php if($openid_enabled) { ?>
   <a href="javascript://" title="OpenID" class="social_connect_login_openid"><img src="<?php echo $images_url . 'openid_32.png' ?>" /></a>
+  <?php } ?>
+  <?php if($wordpress_enabled) { ?>
   <a href="javascript://" title="WordPress" class="social_connect_login_wordpress"><img src="<?php echo $images_url . 'wordpress_32.png' ?>" /></a>
+  <?php } ?>
 </div>
 <br />
 

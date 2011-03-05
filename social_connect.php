@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Social Connect
-Plugin URI: http://github.com/ashwinphatak/wp_social_connect
-Description: Allow users to register and login using their existing Twitter, Facebook, Google, Yahoo, WordPress.com or other OpenID accounts.
-Version: 0.2
-Author: Ashwin Phatak, Brent Shepherd
-Author URI: http://app2technologies.com/
+Plugin URI: http://wordpress.org/extend/plugins/social-connect/
+Description: Allow users to register and login using their existing Twitter, Facebook, Google, Yahoo, Windows Live, WordPress.com or OpenID accounts.
+Version: 0.3
+Author: APP2 Technologies, Brent Shepherd
+Author URI: http://www.app2technologies.com/
 License: GPL2
 */
 ?>
