@@ -30,7 +30,6 @@ $liveid_policy = get_option('social_connect_liveid_policy_url');
 
 $liveid_settings = array("appid"=>$liveid_appid,"secret"=>$liveid_secret,"securityalgorithm"=>$liveid_secalgo,"returnurl"=>$liveid_return,"policyurl"=>$liveid_policy);
 
-
 // Initialize the WindowsLiveLogin module.
 $wll = WindowsLiveLogin::initFromXml(false,$liveid_settings);
 $wll->setDebug($DEBUG);
