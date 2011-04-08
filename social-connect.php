@@ -2,21 +2,40 @@
 /*
 Plugin Name: Social Connect
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
-Description: Allow users to register and login using their existing Twitter, Facebook, Google, Yahoo, Windows Live or WordPress.com account.
-Version: 0.4
+Description: Give your visitors a way to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
+Version: 0.5
 Author: APP2 Technologies, Brent Shepherd
 Author URI: http://www.app2technologies.com/
 License: GPL2
 */
 
+
+/** 
+ * Check technical requirements are fulfilled before activating.
+ **/
+function sc_activate(){
+	if ( !function_exists( 'register_post_status' ) || !function_exists( 'curl_version' ) || version_compare( PHP_VERSION, '5.1.2', '<' ) ) {
+		deactivate_plugins( basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ ) );
+		if( !function_exists( 'register_post_status' ) )
+			wp_die(__( "Sorry, but you can not run Social Connect. It requires WordPress 3.0 or newer. Consider <a href='http://codex.wordpress.org/Updating_WordPress'>upgrading</a> your WordPress installation, it's worth the effort.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
+		elseif( !function_exists( 'curl_version' ) )
+			wp_die(__( "Sorry, but you can not run Social Connect. It requires the <a href='http://www.php.net/manual/en/intro.curl.php'>PHP libcurl extension</a> be installed. Please contact your web host and request libcurl be <a href='http://www.php.net/manual/en/intro.curl.php'>installed</a>.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
+		else
+			wp_die(__( "Sorry, but you can not run Social Connect. It requires PHP 5.1.2 or newer. Please contact your web host and request they <a href='http://www.php.net/manual/en/migration5.php'>migrate</a> your PHP installation to run Social Connect.<br/><a href=" . admin_url( 'plugins.php' ) . ">Return to Plugins Admin page &raquo;</a>"), 'prospress' );
+	}
+	do_action( 'sc_activation' );
+}
+register_activation_hook( __FILE__, 'sc_activate' );
+
+
 /*
- * Notice: registration.php is deprecated since version 3.1 with no alternative available.
+ * Registration.php is deprecated since version 3.1 with no alternative available.
  * registration.php functions moved to user.php, everything is now included by default
  * This file only need to be included for versions before 3.1.
  */
 global $wp_version;
-if( version_compare($wp_version, '3.1', '< ') ) {
-    require_once(ABSPATH . WPINC . '/registration.php');
+if( version_compare( $wp_version, '3.1', '< ' ) ) {
+	require_once( ABSPATH . WPINC . '/registration.php' );
 }
 
 require_once(dirname(__FILE__) . '/constants.php' );
@@ -74,17 +93,6 @@ function sc_social_connect_process_login( $is_ajax = false )
       $sc_email = 'tw_' . md5($sc_provider_identity) . '@' . $domain_name;
       $user_login = $sc_screen_name;
     break;
-
-    case 'liveid':
-      $sc_provider_identity = $_REQUEST['social_connect_liveid_identity'];
-      social_connect_verify_signature($sc_provider_identity, $sc_provided_signature, $redirect_to);
-      $sc_email = $_REQUEST['social_connect_email'];
-      $sc_first_name = $_REQUEST['social_connect_first_name'];
-      $sc_last_name = $_REQUEST['social_connect_last_name'];
-      $sc_profile_url = '';
-      $sc_name = $sc_first_name . ' ' . $sc_last_name;
-      $user_login = strtolower($sc_first_name.$sc_last_name);
-    break;
     
     case 'google':
       $sc_provider_identity = $_REQUEST['social_connect_openid_identity'];
@@ -122,31 +130,6 @@ function sc_social_connect_process_login( $is_ajax = false )
       }
       $user_login = strtolower($sc_first_name.$sc_last_name);
     break;
-
-/* Removed for security: http://wordpress.org/support/topic/plugin-social-connect-social-connect-wp-admin-user-login-through-a-third-party-identity-provider
-    case 'openid':
-      $sc_provider_identity = $_REQUEST['social_connect_openid_identity'];
-      social_connect_verify_signature($sc_provider_identity, $sc_provided_signature, $redirect_to);
-      $sc_email = $_REQUEST['social_connect_email'];
-      $sc_name = $_REQUEST['social_connect_name'];
-      $sc_profile_url = '';
-      if(trim($sc_name) == '') {
-        $names = explode("@", $sc_email);
-        $sc_name = $names[0];
-        $sc_first_name = $sc_name;
-        $sc_last_name = '';
-      } else {
-        $names = explode(" ", $sc_name);
-        $sc_first_name = $names[0];
-        $sc_last_name = $names[1];
-      }
-      
-      $user_login = strtolower($sc_first_name.$sc_last_name);
-
-      setcookie("social_connect_openid_blog_url", $sc_provider_identity, time()+3600, SITECOOKIEPATH, COOKIE_DOMAIN, false, true);
-
-    break;
-*/
 
     case 'wordpress':
       $sc_provider_identity = $_REQUEST['social_connect_openid_identity'];
@@ -243,5 +226,3 @@ function sc_ajax_login(){
 		sc_social_connect_process_login( true );
 }
 add_action('init', 'sc_ajax_login');
-
-?>

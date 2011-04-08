@@ -3,13 +3,11 @@
 function sc_render_login_form_social_connect()
 {
   $images_url = SOCIAL_CONNECT_PLUGIN_URL . '/media/img/';
-  
+
   $twitter_enabled = get_option('social_connect_twitter_enabled') && get_option('social_connect_twitter_consumer_key') && get_option('social_connect_twitter_consumer_secret');
   $facebook_enabled = get_option('social_connect_facebook_enabled', 1) && get_option('social_connect_facebook_api_key') && get_option('social_connect_facebook_secret_key');  
-  $liveid_enabled = get_option('social_connect_liveid_enabled', 1) && get_option('social_connect_liveid_appid_key') && get_option('social_connect_liveid_secret_key') && get_option('social_connect_liveid_security_algorithm') && get_option('social_connect_liveid_return_url') && get_option('social_connect_liveid_policy_url');
   $google_enabled = get_option('social_connect_google_enabled', 1);
   $yahoo_enabled = get_option('social_connect_yahoo_enabled', 1);
-  $openid_enabled = get_option('social_connect_openid_enabled', 1);
   $wordpress_enabled = get_option('social_connect_wordpress_enabled', 1);
 ?>
 
@@ -23,22 +21,12 @@ function sc_render_login_form_social_connect()
   <?php if($twitter_enabled) { ?>
     <a href="javascript://" title="Twitter" class="social_connect_login_twitter"><img src="<?php echo $images_url . 'twitter_32.png' ?>" /></a>
   <?php } ?>
-  <?php if($liveid_enabled) { ?>
-    <a href="javascript://" title="LiveID" class="social_connect_login_liveid"><img src="<?php echo $images_url . 'windows_32.png' ?>" /></a>
-  <?php } ?>
   <?php if($google_enabled) { ?>
   <a href="javascript://" title="Google" class="social_connect_login_google"><img src="<?php echo $images_url . 'google_32.png' ?>" /></a>
   <?php } ?>
   <?php if($yahoo_enabled) { ?>
   <a href="javascript://" title="Yahoo" class="social_connect_login_yahoo"><img src="<?php echo $images_url . 'yahoo_32.png' ?>" /></a>
   <?php } ?>
-  <?php
-/* 
-  <?php if($openid_enabled) { ?>
-  <a href="javascript://" title="OpenID" class="social_connect_login_openid"><img src="<?php echo $images_url . 'openid_32.png' ?>" /></a>
-  <?php } ?>
-*/   
-?>
   <?php if($wordpress_enabled) { ?>
   <a href="javascript://" title="WordPress" class="social_connect_login_wordpress"><img src="<?php echo $images_url . 'wordpress_32.png' ?>" /></a>
   <?php } ?>
@@ -89,16 +77,10 @@ function sc_render_login_form_social_connect()
 <div class="social_connect_twitter_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/twitter/connect.php'); ?>">
 </div>
 
-<div class="social_connect_liveid_auth" appid="<?php echo get_option('social_connect_liveid_appid_key'); ?>" sec_algo="<?php echo get_option('social_connect_liveid_security_algorithm'); ?>" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/liveid/connect.php'); ?>">
-</div>
-
 <div class="social_connect_google_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/google/connect.php'); ?>">
 </div>
 
 <div class="social_connect_yahoo_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/yahoo/connect.php'); ?>">
-</div>
-
-<div class="social_connect_openid_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/openid/connect.php'); ?>">
 </div>
 
 <div class="social_connect_wordpress_auth" redirect_uri="<?php echo(SOCIAL_CONNECT_PLUGIN_URL . '/wordpress/connect.php'); ?>">
@@ -202,7 +184,7 @@ function sc_render_social_connect_widget($args)
 
 function social_connect_plugin_loaded()
 {
-  $widget_ops = array('classname' => 'social_connect_widget', 'description' => "Allows users to register and login using their existing Twitter, Facebook, Windows Live ID, Google, Yahoo, OpenID and wordpress.com accounts" );
+  $widget_ops = array('classname' => 'social_connect_widget', 'description' => "Social Connect register/login buttons." );
   wp_register_sidebar_widget('social_connect_widget', 'Social Connect', 'sc_render_social_connect_widget', $widget_ops);
 }
 
@@ -215,7 +197,4 @@ function sc_social_connect_shortcode_handler($args)
     sc_render_login_form_social_connect();
   }
 }
-
 add_shortcode('social_connect', 'sc_social_connect_shortcode_handler');
-
-?>
