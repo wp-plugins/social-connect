@@ -57,7 +57,7 @@ function sc_render_social_connect_settings(){
 
 				<h3><?php _e('Twitter Settings', 'social_connect'); ?></h3>
 				<p><?php _e('To offer login via Twitter, you need to register your site as a Twitter Application and get a <strong>Consumer Key</strong>, a <strong>Consumer Secret</strong>, an <strong>Access Token</strong> and an <strong>Access Token Secret</strong>.', 'social_connect'); ?></p>
-				<p><?php printf(__('Already registered? Find your keys in your <a target="_blank" href="%2$s">%1$s Application List</a>', 'social_connect'), 'Twitter', 'http://www.facebook.com/developers/apps.php'); ?></p>
+				<p><?php printf(__('Already registered? Find your keys in your <a target="_blank" href="%2$s">%1$s Application List</a>', 'social_connect'), 'Twitter', 'https://dev.twitter.com/apps'); ?></p>
 				<p><?php printf(__('Need to register? <a href="%1$s">Register an Application</a> and fill the form with the details below:', 'social_connect'), 'http://dev.twitter.com/apps/new'); ?>
 					<ol>
 						<li><?php _e('Application Type: <strong>Browser</strong>', 'social_connect'); ?></li>
@@ -112,7 +112,7 @@ function sc_render_social_connect_settings(){
 					<h2><?php _e('Rewrite Diagnostics', 'social_connect'); ?></h2>
 					<p><?php _e('Click on the link below to confirm your URL rewriting and query string parameter passing are setup correctly on your server. If you see a "Test was successful" message after clicking the link then you are good to go. If you see a 404 error or some other error then you need to update rewrite rules or ask your service provider to configure your server settings such that the below URL works correctly.', 'social_connect'); ?></p>
 					<p><a class="button-primary" href='<?php echo SOCIAL_CONNECT_PLUGIN_URL ?>/diagnostics/test.php?testing=http://www.example.com' target='_blank'><?php _e('Test server redirection settings', 'social_connect'); ?></a></p>
-
+					<p>If you web server fails this test, please have your hosting provider whitelist your domain on <em>mod_security</em>. Learn more on the <a href="http://wordpress.org/extend/plugins/social-connect/faq/">Social Connect FAQ</a>.
 				</form>
 			</div> <?php
 	}
