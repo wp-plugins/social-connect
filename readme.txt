@@ -18,7 +18,7 @@ The buttons offer login and registration using a Twitter, Facebook, Google, Yaho
 
 It makes it super easy for new members to register with your site and existing members to login.
 
-= Contribute =
+= Take Over Social Connect =
 
 If you're a developer who wants to take over the Social Connect code base, make a pull request on the [Social Connect GitHub repository](https://github.com/thenbrent/social-connect).
 
