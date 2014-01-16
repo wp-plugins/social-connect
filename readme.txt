@@ -1,16 +1,13 @@
 === Social Connect ===
-Contributors: thenbrent
+Contributors: thenbrent, rodrigosprimo
 Tags: facebook, wordpress.com, twitter, google, yahoo, social, login, register
 Requires at least: 3.0
-Tested up to: 3.2.1
-Stable tag: 0.9
-License: GPLv2
+Tested up to: 3.8
+Stable tag: 0.10
 
-Allow your visitors to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account. 
+Allow your visitors to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
 
 == Description ==
-
-__This plugin is no longer actively developed or supported. Some connections still work, some don't. Use at your own risk. You have been warned.__
 
 Social Connect adds social login buttons on the login, register and comment forms of your WordPress site.
 
@@ -18,9 +15,24 @@ The buttons offer login and registration using a Twitter, Facebook, Google, Yaho
 
 It makes it super easy for new members to register with your site and existing members to login.
 
-= Take Over Social Connect =
+= Props =
 
-If you're a developer who wants to take over the Social Connect code base, make a pull request on the [Social Connect GitHub repository](https://github.com/thenbrent/social-connect).
+Special thanks to:
+
+* [markusdrake](http://wordpress.org/support/profile/markusdrake) for patches and helping in the support forums;
+* [L D](http://wordpress.org/support/profile/enochfung) for patches and helping in the support forums;
+* [Geodanny](http://wordpress.org/support/profile/geodanny) for helping in the support forums; and
+* [Wirone](http://blog.wirone.info/) for polish translation and patches.
+
+And everyone else in the forums sharing the fixes they find and answering each others questions.
+
+= Contribute =
+
+Social Connect is rapidly growing in popularity and help with the growing pains is appreciated. 
+
+If you're a developer, you can contribute fixes & optimisations via [Social Connect on GitHub](https://github.com/thenbrent/social-connect).
+
+Everyone can help out by answering questions in the [Support Forums](http://wordpress.org/tags/social-connect?forum_id=10#postform). 
 
 
 == Installation ==
@@ -59,13 +71,28 @@ For more information, see [Geodanny's](http://wordpress.org/support/profile/geod
 
 = Where can I report bugs & get support? =
 
-This plugin is no longer actively maintained or supported.
+First, a few caveats on support. 
+
+This is free software. Please be patient. I attempt to answer all questions, just not on the same day or even week. Polite and descriptive questions will always be given priority.
+
+Please search the support forums before asking a question - duplicate questions will not receive a reply.
+
+With those caveats in mind, ask questions in the [Support Forums](http://wordpress.org/tags/social-connect?forum_id=10#postform).
+
+To help me diagnose the issue, please include the following information in your post on the [Forums](http://wordpress.org/tags/social-connect?forum_id=10#postform):
+
+* what specifically is broken in Social Connect (eg. the buttons don't show up or it doesn't redirect back form Google)
+* what you did just before Social Connect stopped working (eg. activated, enabled all OpenID providers, clicked the Google login button)
+* version of the plugin
+* version of WordPress
+* list of other plugins installed
+* error messages you receive (if any)
 
 = Why doesn't Social Connect Work? =
 
-Please make sure you are running the latest version of Social Connect and the latest version of WordPress.
+Please make sure you are running the latest version of Social Connect and the latest version of WordPress. 
 
-If you have White Label CMS installed, the javascript it adds to your login page breaks all other plugins which run javascript on the login form.
+If you have White Label CMS installed, the javascript it adds to your login page breaks all other plugins which run javascript on the login form. 
 
 For a quick fix and for more information see this [forum topic](http://wordpress.org/support/topic/social-connect-does-not-work-at-all?replies=7#post-2029255).
 
@@ -77,6 +104,12 @@ If you don't have White Label CMS installed, please double check your settings t
 2. **Comment** - buttons for 3rd party services are also provided on the comment form.
 
 == Changelog ==
+
+= 0.10 =
+* Fix Twitter login
+* Added several hooks to make it easier to extend the plugin
+* Add social-connect html only if there is a social login enabled
+* Pt-br translations
 
 = 0.9 =
 * Setting CURLOPT_SSL_VERIFYPEER to false

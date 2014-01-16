@@ -2,8 +2,11 @@ jQuery.noConflict();
 (function($) { 
 	$(function() {
 		// ready to roll
-		var _social_connect_wordpress_form = $($('.social_connect_wordpress_form')[0]);
-		_social_connect_wordpress_form.dialog({ autoOpen: false, modal: true, dialogClass: 'social-connect-dialog', resizable: false, maxHeight: 400, width:350, maxWidth: 600 });
+		
+		if (social_connect_data.wordpress_enabled) {
+			var _social_connect_wordpress_form = $($('.social_connect_wordpress_form')[0]);
+			_social_connect_wordpress_form.dialog({ autoOpen: false, modal: true, dialogClass: 'social-connect-dialog', resizable: false, maxHeight: 400, width:350, maxWidth: 600 });
+		}
 
 		var _do_google_connect = function() {
 			var google_auth = $('#social_connect_google_auth');
@@ -50,51 +53,43 @@ jQuery.noConflict();
 			}
 		};
 
-		// Close dialog if open and user clicks anywhere outside of it
-		function overlay_click_close() {
-			if (closedialog) {
-				_social_connect_already_connected_form.dialog('close');
-			}
-			closedialog = 1;
-		}
-
-		$(".social_connect_login_facebook").click(function() {
+		$(".social_connect_login_facebook").live("click", function() {
 			_do_facebook_connect();
 		});
 
-		$(".social_connect_login_continue_facebook").click(function() {
+		$(".social_connect_login_continue_facebook").live("click", function() {
 			_do_facebook_connect();
 		});
 
-		$(".social_connect_login_twitter").click(function() {
+		$(".social_connect_login_twitter").live("click", function() {
 			_do_twitter_connect();
 		});
 
-		$(".social_connect_login_continue_twitter").click(function() {
+		$(".social_connect_login_continue_twitter").live("click", function() {
 			_do_twitter_connect();
 		});
 
-		$(".social_connect_login_google").click(function() {
+		$(".social_connect_login_google").live("click", function() {
 			_do_google_connect();
 		});
 
-		$(".social_connect_login_continue_google").click(function() {
+		$(".social_connect_login_continue_google").live("click",function() {
 			_do_google_connect();
 		});
 
-		$(".social_connect_login_yahoo").click(function() {
+		$(".social_connect_login_yahoo").live("click", function() {
 			_do_yahoo_connect();
 		});
 
-		$(".social_connect_login_continue_yahoo").click(function() {
+		$(".social_connect_login_continue_yahoo").live("click", function() {
 			_do_yahoo_connect();
 		});
 
-		$(".social_connect_login_wordpress").click(function() {
+		$(".social_connect_login_wordpress").live("click", function() {
 			_social_connect_wordpress_form.dialog('open');     
 		});
 
-		$(".social_connect_wordpress_proceed").click(function(e) {
+		$(".social_connect_wordpress_proceed").live("click", function(e) {
 			_do_wordpress_connect(e);
 		});
 	});

@@ -3,7 +3,7 @@
 Plugin Name: Social Connect
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
 Description: Allow your visitors to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
-Version: 0.9
+Version: 0.10
 Author: Brent Shepherd
 Author URI: http://wordpress.org/extend/plugins/social-connect/
 License: GPL2
@@ -169,8 +169,7 @@ function sc_social_connect_process_login( $is_ajax = false ){
 		$user_login = $user_data->user_login;
 
 	} else { // Create new user and associate provider identity
-		if ( username_exists( $user_login ) )
-			$user_login = apply_filters( 'social_connect_username_exists', strtolower("sc_". md5( $social_connect_provider . $sc_provider_identity ) ) );
+		$user_login = sc_get_unique_username($user_login);
 
 		$userdata = array( 'user_login' => $user_login, 'user_email' => $sc_email, 'first_name' => $sc_first_name, 'last_name' => $sc_last_name, 'user_url' => $sc_profile_url, 'user_pass' => wp_generate_password() );
 
@@ -191,6 +190,21 @@ function sc_social_connect_process_login( $is_ajax = false ){
 		wp_safe_redirect( $redirect_to );
 	exit();
 }
+
+function sc_get_unique_username($user_login, $c = 1) {
+	if ( username_exists( $user_login ) ) {
+		if ($c > 5)
+			$append = '_'.substr(md5($user_login),0,3) . $c;
+		else
+			$append = $c;
+		
+		$user_login = apply_filters( 'social_connect_username_exists', $user_login . $append );
+		return sc_get_unique_username($user_login,++$c);
+	} else {
+		return $user_login;
+	}
+}
+
 // Hook to 'login_form_' . $action
 add_action( 'login_form_social_connect', 'sc_social_connect_process_login');
 
@@ -201,3 +215,84 @@ function sc_ajax_login(){
 		sc_social_connect_process_login( true );
 }
 add_action( 'init', 'sc_ajax_login');
+
+/**
+ * Use avatars in priority order
+ * @author Aaron Oneal
+ * @link http://aarononeal.info
+ *
+ */
+function sc_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
+	$custom_avatar = '';
+	$social_id = '';
+	$provider_id = '';
+	$user_id = (!is_integer($id_or_email) && !is_string($id_or_email) && get_class($id_or_email)) ? $id_or_email->user_id : $id_or_email;
+	
+	if(!empty($user_id))
+	{
+		// Providers to search for (assume user prefers their current logged in service)
+		// Note: OpenID providers use gravatars
+		$providers = array('facebook', 'twitter');
+		
+		$social_connect_provider = isset( $_COOKIE['social_connect_current_provider']) ? $_COOKIE['social_connect_current_provider'] : '';
+		if(!empty($social_connect_provider) && $social_connect_provider == 'twitter')
+			$providers = array('twitter', 'facebook');
+		
+		foreach($providers as $search_provider) {
+			$social_id = get_user_meta($user_id, 'social_connect_'.$search_provider.'_id', true);
+			if(!empty($social_id)) {
+				$provider_id = $search_provider;
+				break;
+			}
+		}
+	}
+	
+	// At least one social ID was found
+	if(!empty($social_id))
+	{
+		switch($provider_id)
+		{
+			case 'facebook':
+				// square (50x50)
+				// small (50 pixels wide, variable height)
+				// normal (100 pixels wide, variable height)
+				// large (about 200 pixels wide, variable height)
+
+				$size_label = 'large';
+				
+				if($size <= 100)
+					$size_label = 'normal';
+				else if($size <= 50)
+					$size_label = 'small';
+			
+				$custom_avatar = "http://graph.facebook.com/$social_id/picture?type=$size_label";
+				break;
+			case 'twitter':
+				// bigger - 73px by 73px
+				// normal - 48px by 48px
+				// mini - 24px by 24px
+				
+				$size_label = 'bigger';
+				
+				if($size <= 48)
+					$size_label = 'normal';
+				else if($size <= 24)
+					$size_label = 'mini';
+				
+				$custom_avatar = "http://api.twitter.com/1/users/profile_image?id=$social_id&size=$size_label";
+				break;
+		}
+	}
+		
+	if(!empty($custom_avatar)) // return the custom avatar from the social network
+		$return = '<img class="avatar" src="'.$custom_avatar.'" style="width:'.$size.'px" alt="'.$alt.'" />';
+	else if ($avatar) // gravatar
+		$return = $avatar;
+	else // default
+		$return = '<img class="avatar" src="'.$default.'" style="width:'.$size.'px" alt="'.$alt.'" />';
+
+	return $return;
+}
+add_filter('get_avatar', 'sc_filter_avatar', 10, 5);
+
+?>
