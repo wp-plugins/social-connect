@@ -3,12 +3,11 @@
 Plugin Name: Social Connect
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
 Description: Allow your visitors to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
-Version: 0.10.3
-Author: Brent Shepherd
-Author URI: http://wordpress.org/extend/plugins/social-connect/
+Version: 1.0
+Author: Rodrigo Primo
+Author URI: http://rodrigoprimo.com/
 License: GPL2
- */
-
+*/
 
 /** 
  * Check technical requirements are fulfilled before activating.
@@ -53,8 +52,56 @@ require_once( dirname( __FILE__ ) . '/media.php' );
 require_once( dirname( __FILE__ ) . '/admin.php' );
 require_once( dirname( __FILE__ ) . '/ui.php' );
 
+/**
+ * Add valid query vars to WordPress for Social Connect.
+ */
+function sc_query_vars($vars) {
+	$vars[] = 'social-connect';
+	return $vars;
+}
+add_action('query_vars', 'sc_query_vars');
 
-function sc_social_connect_process_login( $is_ajax = false ){
+/**
+ * Parse the WordPress request. If the query var 'social-connect' is present,
+ * then handle the request accordingly.
+ *
+ * @param WP $wp WP instance for the current request
+ */
+function sc_parse_request($wp) {
+	if (array_key_exists('social-connect', $wp->query_vars)) {
+		if (!session_id()) {
+			session_start();
+		}
+		
+		switch ($wp->query_vars['social-connect']) {
+			case 'twitter':
+				require_once 'twitter/connect.php';
+				break;
+			case 'twitter-callback':
+				require_once 'twitter/callback.php';
+				break;
+			case 'facebook-callback':
+				require_once 'facebook/callback.php';
+				break;
+			case 'google':
+				require_once 'google/connect.php';
+				break;
+			case 'yahoo':
+				require_once 'yahoo/connect.php';
+				break;
+			case 'wordpress':
+				require_once 'wordpress/connect.php';
+				break;
+			default:
+				break;
+		}
+		
+		wp_die();
+	}
+}
+add_action('parse_request', 'sc_parse_request');
+
+function sc_social_connect_process_login( $is_ajax = false ) {
 	if ( isset( $_REQUEST[ 'redirect_to' ] ) && $_REQUEST[ 'redirect_to' ] != '' ) {
 		$redirect_to = $_REQUEST[ 'redirect_to' ];
 		// Redirect to https if user wants ssl
@@ -71,87 +118,85 @@ function sc_social_connect_process_login( $is_ajax = false ){
 
 	switch( $social_connect_provider ) {
 		case 'facebook':
-		social_connect_verify_signature( $_REQUEST[ 'social_connect_access_token' ], $sc_provided_signature, $redirect_to );
-		$fb_json = json_decode( sc_curl_get_contents("https://graph.facebook.com/me?access_token=" . $_REQUEST[ 'social_connect_access_token' ]) );
-		$sc_provider_identity = $fb_json->{ 'id' };
-		$sc_email = $fb_json->{ 'email' };
-		$sc_first_name = $fb_json->{ 'first_name' };
-		$sc_last_name = $fb_json->{ 'last_name' };
-		$sc_profile_url = $fb_json->{ 'link' };
-		$sc_name = $sc_first_name . ' ' . $sc_last_name;
-		$user_login = strtolower( $sc_first_name.$sc_last_name );
-		break;
-
+			social_connect_verify_signature( $_REQUEST[ 'social_connect_access_token' ], $sc_provided_signature, $redirect_to );
+			$fb_json = json_decode( sc_http_get_contents("https://graph.facebook.com/me?access_token=" . $_REQUEST['social_connect_access_token']) );
+			$sc_provider_identity = $fb_json->{ 'id' };
+			$sc_email = $fb_json->{ 'email' };
+			$sc_first_name = $fb_json->{ 'first_name' };
+			$sc_last_name = $fb_json->{ 'last_name' };
+			$sc_profile_url = $fb_json->{ 'link' };
+			$sc_name = $sc_first_name . ' ' . $sc_last_name;
+			$user_login = strtolower( $sc_first_name.$sc_last_name );
+			break;
 		case 'twitter':
-		$sc_provider_identity = $_REQUEST[ 'social_connect_twitter_identity' ];
-		social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
-		$sc_name = $_REQUEST[ 'social_connect_name' ];
-		$names = explode(" ", $sc_name );
-		$sc_first_name = $names[0];
-		$sc_last_name = $names[1];
-		$sc_screen_name = $_REQUEST[ 'social_connect_screen_name' ];
-		$sc_profile_url = '';
-		// Get host name from URL
-		$site_url = parse_url( site_url() );
-		$sc_email = 'tw_' . md5( $sc_provider_identity ) . '@' . $site_url['host'];
-		$user_login = $sc_screen_name;
-		break;
-
+			$sc_provider_identity = $_REQUEST[ 'social_connect_twitter_identity' ];
+			social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
+			$sc_name = $_REQUEST[ 'social_connect_name' ];
+			$names = explode(" ", $sc_name );
+			$sc_first_name = $names[0];
+			$sc_last_name = $names[1];
+			$sc_screen_name = $_REQUEST[ 'social_connect_screen_name' ];
+			$sc_profile_url = '';
+			// Get host name from URL
+			$site_url = parse_url( site_url() );
+			$sc_email = 'tw_' . md5( $sc_provider_identity ) . '@' . $site_url['host'];
+			$user_login = $sc_screen_name;
+			break;
 		case 'google':
-		$sc_provider_identity = $_REQUEST[ 'social_connect_openid_identity' ];
-		social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
-		$sc_email = $_REQUEST[ 'social_connect_email' ];
-		$sc_first_name = $_REQUEST[ 'social_connect_first_name' ];
-		$sc_last_name = $_REQUEST[ 'social_connect_last_name' ];
-		$sc_profile_url = '';
-		$sc_name = $sc_first_name . ' ' . $sc_last_name;
-		$user_login = strtolower( $sc_first_name.$sc_last_name );
-		break;
-
+			$sc_provider_identity = $_REQUEST[ 'social_connect_openid_identity' ];
+			social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
+			$sc_email = $_REQUEST[ 'social_connect_email' ];
+			$sc_first_name = $_REQUEST[ 'social_connect_first_name' ];
+			$sc_last_name = $_REQUEST[ 'social_connect_last_name' ];
+			$sc_profile_url = '';
+			$sc_name = $sc_first_name . ' ' . $sc_last_name;
+			$user_login = strtolower( $sc_first_name.$sc_last_name );
+			break;
 		case 'yahoo':
-		$sc_provider_identity = $_REQUEST[ 'social_connect_openid_identity' ];
-		social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
-		$sc_email = $_REQUEST[ 'social_connect_email' ];
-		$sc_name = $_REQUEST[ 'social_connect_name' ];
-		$sc_username = $_REQUEST[ 'social_connect_username' ];
-		$sc_profile_url = '';
-		if ( $sc_name == '') {
-			if ( $sc_username == '') {
+			$sc_provider_identity = $_REQUEST[ 'social_connect_openid_identity' ];
+			social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
+			$sc_email = $_REQUEST[ 'social_connect_email' ];
+			$sc_name = $_REQUEST[ 'social_connect_name' ];
+			$sc_username = $_REQUEST[ 'social_connect_username' ];
+			$sc_profile_url = '';
+			if ( $sc_name == '') {
+				if ( $sc_username == '') {
+					$names = explode("@", $sc_email );
+					$sc_name = $names[0];
+					$sc_first_name = $sc_name;
+					$sc_last_name = '';
+				} else {
+					$names = explode(" ", $sc_username );
+					$sc_first_name = $names[0];
+					$sc_last_name = $names[1];
+				}
+			} else {
+				$names = explode(" ", $sc_name );
+				$sc_first_name = $names[0];
+				$sc_last_name = $names[1];
+			}
+			$user_login = strtolower( $sc_first_name.$sc_last_name );
+			break;
+		case 'wordpress':
+			$sc_provider_identity = $_REQUEST[ 'social_connect_openid_identity' ];
+			social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
+			$sc_email = $_REQUEST[ 'social_connect_email' ];
+			$sc_name = $_REQUEST[ 'social_connect_name' ];
+			$sc_profile_url = '';
+			if ( trim( $sc_name ) == '') {
 				$names = explode("@", $sc_email );
 				$sc_name = $names[0];
 				$sc_first_name = $sc_name;
 				$sc_last_name = '';
 			} else {
-				$names = explode(" ", $sc_username );
+				$names = explode(" ", $sc_name );
 				$sc_first_name = $names[0];
 				$sc_last_name = $names[1];
 			}
-		} else {
-			$names = explode(" ", $sc_name );
-			$sc_first_name = $names[0];
-			$sc_last_name = $names[1];
-		}
-		$user_login = strtolower( $sc_first_name.$sc_last_name );
-		break;
-
-		case 'wordpress':
-		$sc_provider_identity = $_REQUEST[ 'social_connect_openid_identity' ];
-		social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
-		$sc_email = $_REQUEST[ 'social_connect_email' ];
-		$sc_name = $_REQUEST[ 'social_connect_name' ];
-		$sc_profile_url = '';
-		if ( trim( $sc_name ) == '') {
-			$names = explode("@", $sc_email );
-			$sc_name = $names[0];
-			$sc_first_name = $sc_name;
-			$sc_last_name = '';
-		} else {
-			$names = explode(" ", $sc_name );
-			$sc_first_name = $names[0];
-			$sc_last_name = $names[1];
-		}
-		$user_login = strtolower( $sc_first_name.$sc_last_name );
-		break;
+			$user_login = strtolower( $sc_first_name.$sc_last_name );
+			break;
+		default:
+			break;
 	}
 
 	// Cookies used to display welcome message if already signed in recently using some provider
@@ -169,25 +214,39 @@ function sc_social_connect_process_login( $is_ajax = false ){
 		$user_login = $user_data->user_login;
 
 	} else { // Create new user and associate provider identity
-		$user_login = sc_get_unique_username($user_login);
-
-		$userdata = array( 'user_login' => $user_login, 'user_email' => $sc_email, 'first_name' => $sc_first_name, 'last_name' => $sc_last_name, 'user_url' => $sc_profile_url, 'user_pass' => wp_generate_password() );
-
-		// Create a new user
-		$user_id = wp_insert_user( $userdata );
-
-		if ( $user_id && is_integer( $user_id ) )
-			update_user_meta( $user_id, $sc_provider_identity_key, $sc_provider_identity );
+		if ( get_option( 'users_can_register' ) ) {
+			$user_login = sc_get_unique_username($user_login);
+	
+			$userdata = array( 'user_login' => $user_login, 'user_email' => $sc_email, 'first_name' => $sc_first_name, 'last_name' => $sc_last_name, 'user_url' => $sc_profile_url, 'user_pass' => wp_generate_password() );
+	
+			// Create a new user
+			$user_id = wp_insert_user( $userdata );
+	
+			if ( $user_id && is_integer( $user_id ) ) {
+				update_user_meta( $user_id, $sc_provider_identity_key, $sc_provider_identity );
+			}
+		} else {
+			add_filter( 'wp_login_errors', function ( $errors ) {
+				$errors->errors = array();
+				$errors->add( 'registration_disabled', __( '<strong>ERROR</strong>: Registration is disabled.', 'social-connect' ) );
+				
+				return $errors;
+			});
+			
+			return;
+		}
 	}
 
 	wp_set_auth_cookie( $user_id );
 
 	do_action( 'social_connect_login', $user_login );
 
-	if ( $is_ajax )
+	if ( $is_ajax ) {
 		echo '{"redirect":"' . $redirect_to . '"}';
-	else
+	} else {
 		wp_safe_redirect( $redirect_to );
+	}
+	
 	exit();
 }
 
@@ -294,5 +353,3 @@ function sc_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	return $return;
 }
 add_filter('get_avatar', 'sc_filter_avatar', 10, 5);
-
-?>
