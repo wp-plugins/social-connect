@@ -2,10 +2,13 @@ jQuery.noConflict();
 (function($) { 
 	$(function() {
 		// ready to roll
-		
 		if (social_connect_data.wordpress_enabled) {
 			var _social_connect_wordpress_form = $($('.social_connect_wordpress_form')[0]);
-			_social_connect_wordpress_form.dialog({ autoOpen: false, modal: true, dialogClass: 'social-connect-dialog', resizable: false, maxHeight: 400, width:350, maxWidth: 600 });
+			_social_connect_wordpress_form.dialog({
+				'dialogClass' : 'wp-dialog',
+				'modal' : true,
+				'autoOpen' : false,
+			});
 		}
 
 		var _do_google_connect = function() {
@@ -35,7 +38,7 @@ jQuery.noConflict();
 			var context = $(e.target).parents('.social_connect_wordpress_form')[0];
 			var blog_name = $('.wordpress_blog_url', context).val();
 			var blog_url = "http://" + blog_name + ".wordpress.com";
-			redirect_uri = redirect_uri + "?wordpress_blog_url=" + encodeURIComponent(blog_url);
+			redirect_uri = redirect_uri + "&wordpress_blog_url=" + encodeURIComponent(blog_url);
 
 			window.open(redirect_uri,'','scrollbars=yes,menubar=no,height=400,width=800,resizable=yes,toolbar=no,status=no');
 		};

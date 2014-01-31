@@ -3,6 +3,7 @@
 if (!function_exists('sc_render_login_form_social_connect')) :
 
 function sc_render_login_form_social_connect( $args = NULL ) {
+	$display_label = false;
 
 	if( $args == NULL )
 		$display_label = true;
@@ -29,19 +30,19 @@ function sc_render_login_form_social_connect( $args = NULL ) {
 			<?php do_action ('social_connect_pre_form'); ?>
 				<?php if( $facebook_enabled ) :
 					echo apply_filters('social_connect_login_facebook','<a href="javascript:void(0);" title="Facebook" class="social_connect_login_facebook"><img alt="Facebook" src="'.$images_url.'facebook_32.png" /></a>');
-					   endif; ?>
+				endif; ?>
 				<?php if( $twitter_enabled ) :
 					echo apply_filters('social_connect_login_twitter','<a href="javascript:void(0);" title="Twitter" class="social_connect_login_twitter"><img alt="Twitter" src="'.$images_url.'twitter_32.png" /></a>');
-					   endif; ?>
+				endif; ?>
 				<?php if( $google_enabled ) :
 					echo apply_filters('social_connect_login_google','<a href="javascript:void(0);" title="Google" class="social_connect_login_google"><img alt="Google" src="'.$images_url.'google_32.png" /></a>');
-					   endif; ?>
+				endif; ?>
 				<?php if( $yahoo_enabled ) :
 					echo apply_filters('social_connect_login_yahoo','<a href="javascript:void(0);" title="Yahoo" class="social_connect_login_yahoo"><img alt="Yahoo" src="'.$images_url.'yahoo_32.png" /></a>');
-					   endif; ?>
+				endif; ?>
 				<?php if( $wordpress_enabled ) :
 					echo apply_filters('social_connect_login_wordpress','<a href="javascript:void(0);" title="WordPress.com" class="social_connect_login_wordpress"><img alt="WordPress.com" src="'.$images_url.'wordpress_32.png" /></a>');
-					   endif; ?>
+				endif; ?>
 			<?php do_action ('social_connect_post_form'); ?>
 			</div></p>
 	
@@ -51,12 +52,13 @@ function sc_render_login_form_social_connect( $args = NULL ) {
 			do_action ('social_connect_auth'); ?>
 			<div id="social_connect_facebook_auth">
 				<input type="hidden" name="client_id" value="<?php echo get_option( 'social_connect_facebook_api_key' ); ?>" />
-				<input type="hidden" name="redirect_uri" value="<?php echo urlencode( SOCIAL_CONNECT_PLUGIN_URL . '/facebook/callback.php' ); ?>" />
+				<input type="hidden" name="redirect_uri" value="<?php echo home_url('index.php?social-connect=facebook-callback'); ?>" />
 			</div>
-			<div id="social_connect_twitter_auth"><input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/twitter/connect.php' ); ?>" /></div>
-			<div id="social_connect_google_auth"><input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/google/connect.php' ); ?>" /></div>
-			<div id="social_connect_yahoo_auth"><input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/yahoo/connect.php' ); ?>" /></div>
-			<div id="social_connect_wordpress_auth"><input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/wordpress/connect.php' ); ?>" /></div>
+			
+			<div id="social_connect_twitter_auth"><input type="hidden" name="redirect_uri" value="<?php echo home_url('index.php?social-connect=twitter'); ?>" /></div>
+			<div id="social_connect_google_auth"><input type="hidden" name="redirect_uri" value="<?php echo home_url('index.php?social-connect=google'); ?>" /></div>
+			<div id="social_connect_yahoo_auth"><input type="hidden" name="redirect_uri" value="<?php echo home_url('index.php?social-connect=yahoo'); ?>" /></div>
+			<div id="social_connect_wordpress_auth"><input type="hidden" name="redirect_uri" value="<?php echo home_url('index.php?social-connect=wordpress'); ?>" /></div>
 		
 			<div class="social_connect_wordpress_form" title="WordPress">
 				<p><?php _e( 'Enter your WordPress.com blog URL', 'social_connect' ); ?></p><br />
