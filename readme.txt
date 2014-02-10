@@ -3,7 +3,7 @@ Contributors: rodrigosprimo
 Tags: facebook, wordpress.com, twitter, google, yahoo, social, login, register
 Requires at least: 3.0
 Tested up to: 3.8
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Donate link: http://rodrigoprimo.com/donate/
@@ -108,8 +108,12 @@ Unfortunately the Twitter API don't return the user email address. So the plugin
 
 1. **Login** - on the login and registration form, buttons for 3rd party services are provided.
 2. **Comment** - buttons for 3rd party services are also provided on the comment form.
+3. **Admin** - plugin options
 
 == Changelog ==
+
+= 1.0.2 =
+* Add screeshot of the admin page and update FAQ page
 
 = 1.0.1 =
 * Remove anonymous function to preserve PHP 5.2 compatibility broken with the release of version 1.0 of the plugin
