@@ -3,7 +3,7 @@
 Plugin Name: Social Connect
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
 Description: Allow your visitors to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
-Version: 1.0.6
+Version: 1.1
 Author: Rodrigo Primo
 Author URI: http://rodrigoprimo.com/
 License: GPL2
@@ -365,3 +365,14 @@ function sc_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	return $return;
 }
 add_filter('get_avatar', 'sc_filter_avatar', 10, 5);
+
+/**
+ * Add link to Social Connect settings page in the plugins page
+ * 
+ * @return array plugin links
+*/
+function sc_add_settings_link( $default_links ) {
+	$links = array('<a href="' . get_admin_url(null, 'options-general.php?page=social-connect-id') . '">' . __('Settings', 'social_connect') . '</a>');
+	return array_merge($links, $default_links);
+}
+add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'sc_add_settings_link' );
