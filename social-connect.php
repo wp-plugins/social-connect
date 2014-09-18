@@ -3,13 +3,13 @@
 Plugin Name: Social Connect
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
 Description: Allow your visitors to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
-Version: 1.1
+Version: 1.2
 Author: Rodrigo Primo
 Author URI: http://rodrigoprimo.com/
 License: GPL2
 */
 
-/** 
+/**
  * Check technical requirements are fulfilled before activating.
  **/
 function sc_activate(){
@@ -27,15 +27,6 @@ function sc_activate(){
 	do_action( 'sc_activation' );
 }
 register_activation_hook( __FILE__, 'sc_activate' );
-
-
-/**
- * Registration.php is deprecated since version 3.1 with no alternative available.
- * registration.php functions moved to user.php, everything is now included by default
- * This file only need to be included for versions before 3.1.
- */
-if ( !function_exists( 'email_exists' ) )
-	require_once( ABSPATH . WPINC . '/registration.php' );
 
 /**
  * Internationalization of the plugin
@@ -72,7 +63,7 @@ function sc_parse_request($wp) {
 		if (!session_id()) {
 			session_start();
 		}
-		
+
 		switch ($wp->query_vars['social-connect']) {
 			case 'twitter':
 				require_once 'twitter/connect.php';
@@ -86,6 +77,12 @@ function sc_parse_request($wp) {
 			case 'google':
 				require_once 'google/connect.php';
 				break;
+			case 'google-plus':
+				require_once 'google-plus/connect.php';
+				break;
+			case 'google-plus-callback':
+				require_once 'google-plus/callback.php';
+				break;
 			case 'yahoo':
 				require_once 'yahoo/connect.php';
 				break;
@@ -95,7 +92,7 @@ function sc_parse_request($wp) {
 			default:
 				break;
 		}
-		
+
 		wp_die();
 	}
 }
@@ -126,16 +123,17 @@ function sc_social_connect_process_login( $is_ajax = false ) {
 			$sc_last_name = $fb_json->{ 'last_name' };
 			$sc_profile_url = $fb_json->{ 'link' };
 			$sc_name = $sc_first_name . ' ' . $sc_last_name;
-			$user_login = strtolower( $sc_first_name.$sc_last_name );
+			$user_login = strtolower( str_replace( ' ', '', $sc_first_name . $sc_last_name ) );
 			break;
 		case 'twitter':
 			$sc_provider_identity = $_REQUEST[ 'social_connect_twitter_identity' ];
 			social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
 			$sc_name = $_REQUEST[ 'social_connect_name' ];
-			$names = explode(" ", $sc_name );
+			$names = explode( ' ', $sc_name, 2 );
 			$sc_first_name = $names[0];
 			$sc_last_name = $names[1];
 			$sc_screen_name = $_REQUEST[ 'social_connect_screen_name' ];
+			$sc_avatar = isset( $_REQUEST['social_connect_avatar'] ) ? str_replace( 'http:', '', $_REQUEST['social_connect_avatar'] ) : '';
 			$sc_profile_url = '';
 			// Get host name from URL
 			$site_url = parse_url( site_url() );
@@ -150,6 +148,15 @@ function sc_social_connect_process_login( $is_ajax = false ) {
 			$sc_last_name = $_REQUEST[ 'social_connect_last_name' ];
 			$sc_profile_url = '';
 			$sc_name = $sc_first_name . ' ' . $sc_last_name;
+			$user_login = strtolower( str_replace( ' ', '', $sc_first_name . $sc_last_name ) );
+			break;
+		case 'google-plus':
+			$sc_provider_identity = $_REQUEST['social_connect_google_id'];
+			social_connect_verify_signature( $sc_provider_identity, $sc_provided_signature, $redirect_to );
+			$sc_email = $_REQUEST['social_connect_email'];
+			$sc_first_name = $_REQUEST['social_connect_first_name'];
+			$sc_last_name = $_REQUEST['social_connect_last_name'];
+			$sc_profile_url = $_REQUEST['social_connect_profile_url'];
 			$user_login = strtolower( $sc_first_name.$sc_last_name );
 			break;
 		case 'yahoo':
@@ -166,16 +173,16 @@ function sc_social_connect_process_login( $is_ajax = false ) {
 					$sc_first_name = $sc_name;
 					$sc_last_name = '';
 				} else {
-					$names = explode(" ", $sc_username );
+					$names = explode( ' ', $sc_username, 2 );
 					$sc_first_name = $names[0];
 					$sc_last_name = $names[1];
 				}
 			} else {
-				$names = explode(" ", $sc_name );
+				$names = explode( ' ', $sc_name, 2 );
 				$sc_first_name = $names[0];
 				$sc_last_name = $names[1];
 			}
-			$user_login = strtolower( $sc_first_name.$sc_last_name );
+			$user_login = strtolower( str_replace( ' ', '', $sc_first_name . $sc_last_name ) );
 			break;
 		case 'wordpress':
 			$sc_provider_identity = $_REQUEST[ 'social_connect_openid_identity' ];
@@ -189,11 +196,11 @@ function sc_social_connect_process_login( $is_ajax = false ) {
 				$sc_first_name = $sc_name;
 				$sc_last_name = '';
 			} else {
-				$names = explode(" ", $sc_name );
+				$names = explode( ' ', $sc_name, 2 );
 				$sc_first_name = $names[0];
 				$sc_last_name = $names[1];
 			}
-			$user_login = strtolower( $sc_first_name.$sc_last_name );
+			$user_login = strtolower( str_replace( ' ', '', $sc_first_name . $sc_last_name ) );
 			break;
 		default:
 			break;
@@ -216,18 +223,23 @@ function sc_social_connect_process_login( $is_ajax = false ) {
 	} else { // Create new user and associate provider identity
 		if ( get_option( 'users_can_register' ) ) {
 			$user_login = sc_get_unique_username($user_login);
-	
+
 			$userdata = array( 'user_login' => $user_login, 'user_email' => $sc_email, 'first_name' => $sc_first_name, 'last_name' => $sc_last_name, 'user_url' => $sc_profile_url, 'user_pass' => wp_generate_password() );
-	
+
 			// Create a new user
-			$user_id = wp_insert_user( $userdata );
-	
+			$user_id = wp_insert_user( apply_filters( 'social_connect_insert_user', $userdata ) );
+
 			if ( $user_id && is_integer( $user_id ) ) {
 				update_user_meta( $user_id, $sc_provider_identity_key, $sc_provider_identity );
 			}
+
+			if( isset( $sc_avatar ) && $sc_avatar ){
+				update_user_meta( $user_id, 'social_connect_twitter_avatar', $sc_avatar );
+			}
+			do_action( 'social_connect_inserted_user', $user_id, $social_connect_provider );
 		} else {
 			add_filter( 'wp_login_errors', 'sc_login_errors' );
-			
+
 			return;
 		}
 	}
@@ -241,14 +253,14 @@ function sc_social_connect_process_login( $is_ajax = false ) {
 	} else {
 		wp_safe_redirect( $redirect_to );
 	}
-	
+
 	exit();
 }
 
 /**
  * Add error message when user try to login
  * with an nonexistent e-mail and registration is disabled
- * 
+ *
  * @param WP_Error $errors
  * @return WP_Error
  */
@@ -265,7 +277,7 @@ function sc_get_unique_username($user_login, $c = 1) {
 			$append = '_'.substr(md5($user_login),0,3) . $c;
 		else
 			$append = $c;
-		
+
 		$user_login = apply_filters( 'social_connect_username_exists', $user_login . $append );
 		return sc_get_unique_username($user_login,++$c);
 	} else {
@@ -295,17 +307,17 @@ function sc_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 	$social_id = '';
 	$provider_id = '';
 	$user_id = (!is_integer($id_or_email) && !is_string($id_or_email) && get_class($id_or_email)) ? $id_or_email->user_id : $id_or_email;
-	
+
 	if (!empty($user_id)) {
 		// Providers to search for (assume user prefers their current logged in service)
 		// Note: OpenID providers use gravatars
 		$providers = array('facebook', 'twitter');
-		
+
 		$social_connect_provider = isset( $_COOKIE['social_connect_current_provider']) ? $_COOKIE['social_connect_current_provider'] : '';
 		if (!empty($social_connect_provider) && $social_connect_provider == 'twitter') {
 			$providers = array('twitter', 'facebook');
 		}
-		
+
 		foreach($providers as $search_provider) {
 			$social_id = get_user_meta($user_id, 'social_connect_'.$search_provider.'_id', true);
 			if (!empty($social_id)) {
@@ -314,7 +326,7 @@ function sc_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 			}
 		}
 	}
-	
+
 	// At least one social ID was found
 	if (!empty($social_id)) {
 		switch($provider_id) {
@@ -325,32 +337,33 @@ function sc_filter_avatar($avatar, $id_or_email, $size, $default, $alt) {
 				// large (about 200 pixels wide, variable height)
 
 				$size_label = 'large';
-				
+
 				if($size <= 100)
 					$size_label = 'normal';
 				else if($size <= 50)
 					$size_label = 'small';
-			
+
 				$custom_avatar = "http://graph.facebook.com/$social_id/picture?type=$size_label";
 				break;
 			case 'twitter':
 				// bigger - 73px by 73px
 				// normal - 48px by 48px
 				// mini - 24px by 24px
-				
+
 				$size_label = 'bigger';
-				
+
 				if ($size <= 48) {
 					$size_label = 'normal';
 				} else if ($size <= 24) {
 					$size_label = 'mini';
 				}
-				
-				$custom_avatar = "http://api.twitter.com/1/users/profile_image?id=$social_id&size=$size_label";
+
+				$custom_avatar = get_user_meta( $user_id, 'social_connect_twitter_avatar', true );
+				$custom_avatar = str_replace( '_normal', '_' . $size_label, $custom_avatar );
 				break;
 		}
 	}
-		
+
 	if (!empty($custom_avatar)) {
 		// return the custom avatar from the social network
 		$return = '<img class="avatar" src="'.$custom_avatar.'" style="width:'.$size.'px" alt="'.$alt.'" />';
@@ -368,7 +381,7 @@ add_filter('get_avatar', 'sc_filter_avatar', 10, 5);
 
 /**
  * Add link to Social Connect settings page in the plugins page
- * 
+ *
  * @return array plugin links
 */
 function sc_add_settings_link( $default_links ) {
