@@ -2,7 +2,7 @@
 Contributors: rodrigosprimo
 Tags: facebook, wordpress.com, twitter, google, yahoo, social, login, register
 Requires at least: 3.0
-Tested up to: 3.9.1
+Tested up to: 4.1.1
 Stable tag: 1.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -66,6 +66,10 @@ Social Connect attempts to work with the default WordPress comment, login and re
 If you want to add the social connect login or registration forms to another location in your theme, you can insert the following code in that location:
 
 `<?php do_action( 'social_connect_form' ); ?>`
+
+You can also use the shortcode below to add Social Connect login to a page or post:
+
+`[social_connect]`
 
 = Where can I report bugs & get support? =
 
