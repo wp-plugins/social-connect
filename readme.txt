@@ -2,7 +2,7 @@
 Contributors: rodrigosprimo
 Tags: facebook, wordpress.com, twitter, google, yahoo, social, login, register
 Requires at least: 3.0
-Tested up to: 3.9.1
+Tested up to: 4.1.1
 Stable tag: 1.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,6 +12,13 @@ Donate link: http://rodrigoprimo.com/donate/
 Allow your visitors to comment, login and register with their Twitter, Facebook, Google, Yahoo or WordPress.com account.
 
 == Description ==
+
+<strong>Looking for maintainers.</strong> This plugin is currently not maintained. If you would like to take over the development please let me know using the plugin support forum or GitHub issue system.
+
+WordPress Social Login is a good alternative to this plugin:
+
+https://wordpress.org/plugins/wordpress-social-login/
+
 
 Social Connect adds social login buttons on the login, register and comment forms of your WordPress site.
 
@@ -66,6 +73,10 @@ Social Connect attempts to work with the default WordPress comment, login and re
 If you want to add the social connect login or registration forms to another location in your theme, you can insert the following code in that location:
 
 `<?php do_action( 'social_connect_form' ); ?>`
+
+You can also use the shortcode below to add Social Connect login to a page or post:
+
+`[social_connect]`
 
 = Where can I report bugs & get support? =
 
